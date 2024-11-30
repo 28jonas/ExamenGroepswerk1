@@ -62,15 +62,15 @@
 					landen.forEach(land => {
 						outputHTML +=	`
 							<div>
-							<div class="card h-100 m-1 ">
-                            <img src="${land.flags.png}" class="card-img-top img-fluid" alt="${land.name.common}">
-                            <div class="card-body">
-                            <h5 class="card-title">${land.name.common}</h5>
-                            <p class="card-text">Region: ${land.subregion}</p>
-                            <p class="card-text">Population: ${land.population}</p>
-                            <a href="#" class="btn btn-primary">Go somewhere</a>
-                            </div>
-							</div>
+								<div class="card h-100 m-1 ">
+                                    <img src="${land.flags.png}" class="card-img-top img-fluid" alt="${land.name.common}">
+                                    <div class="card-body">
+                                        <h5 class="card-title">${land.name.common}</h5>
+                                        <p class="card-text">Region: ${land.subregion}</p>
+                                        <p class="card-text">Population: ${land.population}</p>
+                                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                                    </div>
+								</div>
 							</div>
 							` /*+ ouputHTMlland*/
 					})
