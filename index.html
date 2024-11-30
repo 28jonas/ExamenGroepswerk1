@@ -9,12 +9,29 @@
 	<title>Landen van de wereld</title>
 </head>
 <body>
-<h1>Landen van de wereld</h1>
-<input type="text" id="continent" placeholder="Voer een land in:">
-<button id="btn">Zoeken</button>
+<div class="d-flex flex-column align-items-center ">
+	<h1>Landen van de wereld</h1>
+	<div><!--Dit zoekt momenteel op de continenten maar moet landen worden-->
+		<input type="text" id="continent" placeholder="Voer een continent in:">
+		<button id="btn">Zoeken</button>
+	</div>
+	
+	<div> <!--Hiermoeten de continenten in opgezocht worden-->
+		<select class="form-select" aria-label="Default select example">
+			<option selected>Choose a continent</option>
+			<option value="1">Europe</option>
+			<option value="2">North America</option>
+			<option value="3">South America</option>
+			<option value="4">America</option>
+			<option value="5">Asia</option>
+			<option value="6">Africa</option>
+			<option value="7">Antartica</option>
+		</select>
+	</div>
+</div>
 
-<div class="container">
-	<div id="showimg" class="row row-cols-1 row-cols-sm-2 row-cols-lg-4">
+<div class="container mt-5">
+	<div id="showimg" class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-3">
 	
 	</div>
 </div>
@@ -43,11 +60,10 @@
 					console.log(landen)
 					let outputHTML = ` `;
 					landen.forEach(land => {
-						
 						outputHTML +=	`
 							<div>
 							<div class="card h-100 m-1 ">
-                            <img src="${land.flags.png}" class="card-img-top" alt="...">
+                            <img src="${land.flags.png}" class="card-img-top img-fluid" alt="${land.name.common}">
                             <div class="card-body">
                             <h5 class="card-title">${land.name.common}</h5>
                             <p class="card-text">Region: ${land.subregion}</p>
