@@ -40,18 +40,18 @@
 		axios.get(url)
 				.then(response =>{
 					const landen = response.data;
+					console.log(landen)
 					let outputHTML = ` `;
-					landen.forEach(landd => {
-						const land = landd.name.common;
-						const vlag = landd.flags.png;
+					landen.forEach(land => {
 						
 						outputHTML +=	`
 							<div>
 							<div class="card h-100 m-1 ">
-                            <img src="${vlag}" class="card-img-top" alt="...">
+                            <img src="${land.flags.png}" class="card-img-top" alt="...">
                             <div class="card-body">
-                            <h5 class="card-title">${land}</h5>
-                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                            <h5 class="card-title">${land.name.common}</h5>
+                            <p class="card-text">Region: ${land.subregion}</p>
+                            <p class="card-text">Population: ${land.population}</p>
                             <a href="#" class="btn btn-primary">Go somewhere</a>
                             </div>
 							</div>
