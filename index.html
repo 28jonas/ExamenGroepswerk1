@@ -78,8 +78,10 @@
 					let outputHTML = ` `;
 					landen.forEach(land => {
 						const languages = land.languages ? Object.values(land.languages).join(", "): 'No languages available';
-						const currencyArray = land.currencies ? Object.values(land.currencies).join(", "): "No currencies";
 						
+						const currencyArray = land.currencies ? Object.values(land.currencies).map(currency => currency.name).join(", ") : "No currencies available";
+						
+						console.log(currencyArray)
 						outputHTML +=	`
 							<div>
 								<div class="card h-100 m-1 ">
@@ -136,10 +138,10 @@
 		modalBody.innerHTML =
 				`
 		<p>Information about <strong>${countryName}</strong> will go here.</p>
-		<p>${countryCapital}</p>
-		<p>${countryLanguages}</p>
-		<p>${countryCurrencies}</p>
-		<p>${countryPopulation}</p>
+		<p>Capital: ${countryCapital}</p>
+		<p>Languages: ${countryLanguages}</p>
+		<p>Currencies: ${countryCurrencies}</p>
+		<p>Population: ${countryPopulation}</p>
 		<img src="${countryFlag}" alt="${countryName}">
 				`;
 	});
