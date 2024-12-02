@@ -1,5 +1,6 @@
 const continentSelector = document.getElementById("continentSelector")
 const countrySearch = document.getElementById("countrySearch")
+const countryListEl = document.getElementById('countryList');
 
 let countries = [];
 
@@ -31,6 +32,7 @@ async function getData(){
         setContinents([...new Set(data.flatMap(country => country.continents))])
     } catch (error) {
         console.error('Error fetching countries:', error);
+        countryListEl.innerHTML = '<div class="alert alert-danger w-50 mx-auto text-center" role="alert">Error loading data. Try refreshing page.</div>';
     }
 }
 
@@ -60,7 +62,6 @@ function applyFilters(){
 }
 
 function setCountries(list) {
-    const countryListEl = document.getElementById('countryList');
     if (list.length === 0) {
         countryListEl.innerHTML = '<div class="alert alert-info w-50 mx-auto text-center" role="alert">No countries found. Try a different search.</div>';
         return;
