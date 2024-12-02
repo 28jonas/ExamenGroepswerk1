@@ -1,85 +1,96 @@
-const btn = document.getElementById("btn")
-btn.addEventListener("click",function (){
-    const continent = document.getElementById("continent").value.trim();
+const continentSelector = document.getElementById("continentSelector")
+const countrySearch = document.getElementById("countrySearch")
+let countries = [];
 
-    if(!continent){
-        alert("Voer een regio in om te zoeken");
-        return;
+getData();
+
+
+countrySearch.addEventListener("input", () => {
+    const filteredCountries = applyFilters();
+    setCountries(filteredCountries);
+});
+continentSelector.addEventListener("change", () => {
+    const filteredCountries = applyFilters();
+    setCountries(filteredCountries);
+});
+
+async function getData(){
+    try {
+        const {data} = await axios.get('https://restcountries.com/v3.1/all');
+        countries = data.sort((a, b) => a.name.common.localeCompare(b.name.common)) // alfabetisch ordenen
+        setCountries(countries)
+        setContinents([...new Set(data.flatMap(country => country.continents))])
+    } catch (error) {
+        console.error('Error fetching countries:', error);
     }
-
-    const url = `https://restcountries.com/v3.1/region/${continent}`
-
-    axios.get(url)
-        .then(response =>{
-            const landen = response.data;
-            console.log(landen)
-            let outputHTML = ` `;
-            landen.forEach(land => {
-                const languages = land.languages ? Object.values(land.languages).join(", "): 'No languages available';
-
-                const currencyArray = land.currencies ? Object.values(land.currencies).map(currency => currency.name).join(", ") : "No currencies available";
-
-                console.log(currencyArray)
-                outputHTML +=	`
-							<div>
-								<div class="card h-100 m-1 ">
-                                    <img src="${land.flags.png}" class="card-img-top img-fluid" alt="${land.name.common}">
-                                    <div class="card-body">
-                                        <h5 class="card-title">${land.name.common}</h5>
-                                        <p class="card-text">Region: ${land.subregion}</p>
-                                        <p class="card-text">Population: ${land.population}</p>
-                                        <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"  data-country-name="${land.name.common}" data-country-capital="${land.capital}" data-country-languages="${languages}" data-country-currencie="${currencyArray}" data-country-population="${land.population}" data-country-flag="${land.flags.png}">Find some more info here</a>
-                                    </div>
-								</div>
-							</div>
-							
-							` /*+ ouputHTMlland*/
+}
 
 
-            });
-            /*
-            * hoofdstad = console.log(`land.capital`)
-            * talen = const languages = land.languages ? Object.values(land.languages).join(", "): 'No languages available';
-                console.log(languages)
-            * valuta = const currencyArray = Object.values(land.currencies)
-                console.log(currencyArray[0].name)
-            * populatie = console.log(`${land.population}`)
-            * vlag =  ${land.flags.png}
-            * */
-
-
-            document.getElementById("showimg").innerHTML = outputHTML;
-
-        }).catch(error =>{
-        console.log("fout bij het ophalen gegevens", error)
+function setContinents(continents){
+    continentSelector.innerHTML=`<option value="" selected>Choose a continent</option>`
+    continents.forEach(continent => {
+        continentSelector.innerHTML+=`<option value="${continent}">${continent}</option>`
     })
-});
+}
 
-const modal = document.getElementById('exampleModal');
-modal.addEventListener('show.bs.modal', function (event) {
-    // Haal de knop op die het modal opent
-    const button = event.relatedTarget;
+function applyFilters(){
 
-    // Haal de data-attribute op
-    const countryName = button.getAttribute('data-country-name');
-    const countryCapital = button.getAttribute('data-country-capital');
-    const countryLanguages = button.getAttribute('data-country-languages')
-    const countryCurrencies = button.getAttribute('data-country-currencie')
-    const countryPopulation = button.getAttribute('data-country-population')
-    const countryFlag = button.getAttribute('data-country-flag')
+    const searchTerm = countrySearch.value.trim().toLowerCase();
 
-    // Vul de modal met de landinformatie
-    const modalTitle = modal.querySelector('.modal-title');
-    const modalBody = modal.querySelector('.modal-body');
+    // Filter countries by name (substring search in a.name.common)
+    let filteredCountries = countries.filter(country => country.name.common.toLowerCase().includes(searchTerm));
 
-    modalTitle.textContent = `Details of ${countryName}`;
-    modalBody.innerHTML =
-        `
-		<p>Information about <strong>${countryName}</strong> will go here.</p>
-		<p>Capital: ${countryCapital}</p>
-		<p>Languages: ${countryLanguages}</p>
-		<p>Currencies: ${countryCurrencies}</p>
-		<p>Population: ${countryPopulation}</p>
-		<img src="${countryFlag}" alt="${countryName}">
-				`;
-});
+    // If the selected continent is empty, show all countries
+    filteredCountries = continentSelector.value === ""
+        ? filteredCountries // No filter, show all countries
+        : filteredCountries.filter(country => country.continents.includes(continentSelector.value)); // Filter by selected continent
+
+    return filteredCountries;
+}
+
+function setCountries(list) {
+    const countryListEl = document.getElementById('showimg');
+    let htmlContent = "";
+
+    // Pre-build all HTML content in one loop
+    list.forEach(land => {
+        htmlContent += `
+        <div class="col">
+            <div class="card h-100">
+                <img src="${land.flags.png}" class="card-img-top img-fluid" alt="${land.name.common}">
+                <div class="card-body">
+                    <h5 class="card-title">${land.name.common}</h5>
+                    <p class="card-text">Region: ${land.subregion}</p>
+                    <p class="card-text">Population: ${land.population}</p>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-index="${list.indexOf(land)}">
+                        Find some more info here
+                    </button>
+                </div>
+            </div>
+        </div>`;
+    });
+
+    // Insert all the generated HTML at once
+    countryListEl.innerHTML = htmlContent;
+
+    // Add event listeners after inserting content
+    const buttons = countryListEl.querySelectorAll('button');
+    buttons.forEach(button => {
+        button.addEventListener("click", (e) => {
+            const landIndex = e.target.getAttribute('data-index');
+            const land = list[landIndex];
+            const modal = document.getElementById('exampleModal');
+            const languages = Object.values(land.languages ?? {}).join(", ") || "No languages available";
+            const currencyArray = Object.values(land.currencies ?? {}).map(c => c.name).join(", ") || "No currencies available";
+
+            modal.querySelector('.modal-title').textContent = `Details of ${land.name.common}`;
+            modal.querySelector('.modal-body').innerHTML = `
+            <p>Information about <strong>${land.name.common}</strong> will go here.</p>
+            <p>Capital: ${land.capital}</p>
+            <p>Languages: ${languages}</p>
+            <p>Currencies: ${currencyArray}</p>
+            <p>Population: ${land.population}</p>
+            <img src="${land.flags.png}" alt="Flag of ${land.name.common}">`;
+        });
+    });
+}
