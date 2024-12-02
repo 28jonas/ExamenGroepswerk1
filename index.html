@@ -9,19 +9,20 @@
 	<script async src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 	<script defer src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js"></script>
 	<script defer src="./script.js"></script>
+	
+	<link rel="stylesheet" href="./styles.css">
 
-	<title>Landen van de wereld</title>
+	<title>Countries of the world</title>
 </head>
 <body>
 <div class="d-flex flex-column align-items-center ">
 	<h1>Landen van de wereld</h1>
-	<div><!--Dit zoekt de landen op-->
-		<input type="text" id="countrySearch" placeholder="Voer een land in:">
-		<button id="btn">Zoeken</button>
+	<div class=""><!--Dit zoekt de landen op-->
+		<input type="text" id="countrySearch" class="rounded-pill text-center border-1 border-light-subtle fs-4" placeholder="Type a country:">
 	</div>
 	
-	<div> <!--Hiermoeten de continenten in opgezocht worden-->
-		<select id="continentSelector" class="form-select" aria-label="Default select example">
+	<div class="select mt-3"> <!--Hiermoeten de continenten in opgezocht worden-->
+		<select id="continentSelector" aria-label="Default select example">
 		</select>
 	</div>
 </div>
