@@ -52,6 +52,15 @@
 	</div>
 </div>
 
+<script>
+	const continentInput = document.getElementById('continent');
+	
+	continentInput.addEventListener('input', function () {
+		// Verwijder alle niet-letters met een regex
+		this.value = this.value.replace(/[^a-zA-Z\s-]/g, '');
+	});
+</script>
+
 
 </body>
 </html>
