@@ -23,17 +23,23 @@ btn.addEventListener("click",function (){
                 outputHTML +=	`
 							<div>
 								<div class="card h-100 m-1 ">
-                                    <img src="${land.flags.png}" class="card-img-top img-fluid" alt="${land.name.common}">
+								    <div style="height: 300px" class="d-flex align-items-center border-bottom">
+                                    <img src="${land.flags.png}" class="card-img-top img-fluid img-thumbnail my-auto" alt="${land.name.common}">
+                                    </div>
                                     <div class="card-body">
                                         <h5 class="card-title">${land.name.common}</h5>
-                                        <p class="card-text">Region: ${land.subregion}</p>
-                                        <p class="card-text">Population: ${land.population}</p>
-                                        <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"  data-country-name="${land.name.common}" data-country-capital="${land.capital}" data-country-languages="${languages}" data-country-currencie="${currencyArray}" data-country-population="${land.population}" data-country-flag="${land.flags.png}">Find some more info here</a>
+                                        <p class="card-text mb-0">Region: ${land.subregion}</p>
+                                        <p class="card-text">Population: ${land.population.toLocaleString('nl-NL')}</p>
+                                        <div class="d-flex justify-content-center">
+                                            <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"  data-country-name="${land.name.common}" data-country-capital="${land.capital}" data-country-languages="${languages}" data-country-currencie="${currencyArray}" data-country-population="${land.population}" data-country-flag="${land.flags.png}">More info over ${land.name.common} </a>
+                                        </div>
+                                        
                                     </div>
 								</div>
 							</div>
 							
 							` /*+ ouputHTMlland*/
+                            /*toLocalString is voor het formatteren van de cijfers*/
 
 
             });
