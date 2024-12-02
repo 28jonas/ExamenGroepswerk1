@@ -94,7 +94,36 @@ function setCountries(list) {
             <p>Languages: ${languages}</p>
             <p>Currencies: ${currencyArray}</p>
             <p>Population: ${land.population}</p>
-            <img src="${land.flags.png}" alt="Flag of ${land.name.common}">`;
+            <img src="${land.flags.png}" alt="Flag of ${land.name.common}">
+            <div id="map" style="width: 80%; height: 400px;"></div>
+            </div>
+            
+`;
+
+            const mapEl = modal.querySelector('.modal-body #map')
+
+
+            // Check if land.capitalInfo.latlng exists and has valid latitude and longitude
+            const latlng = land.capitalInfo && Array.isArray(land.capitalInfo.latlng) && land.capitalInfo.latlng.length === 2
+                ? land.capitalInfo.latlng
+                : [0, 0];  // Fallback to [0, 0] if latlng is invalid
+
+            // Create the map with the corrected coordinates
+            const map = L.map('map').setView([latlng[0], latlng[1]], 10);
+
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+            }).addTo(map);
+
+            if (latlng[0] !== 0 && latlng[1] !== 0)
+                L.marker([latlng[0], latlng[1]]).addTo(map);
+
+            mapEl.classList.add("visually-hidden")
+
+            setTimeout(function() {
+                mapEl.classList.remove("visually-hidden")
+                map.invalidateSize();
+            }, 250);
         });
     });
 }
