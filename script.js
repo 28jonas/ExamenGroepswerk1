@@ -49,7 +49,11 @@ function applyFilters(){
 }
 
 function setCountries(list) {
-    const countryListEl = document.getElementById('showimg');
+    const countryListEl = document.getElementById('countryList');
+    if (list.length === 0) {
+        countryListEl.innerHTML = "<p>No countries found. Try a different search.</p>";
+        return;
+    }
     let htmlContent = "";
 
     // Pre-build all HTML content in one loop
@@ -62,7 +66,7 @@ function setCountries(list) {
                     <h5 class="card-title">${land.name.common}</h5>
                     <p class="card-text">Region: ${land.subregion}</p>
                     <p class="card-text">Population: ${land.population}</p>
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-index="${list.indexOf(land)}">
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#countryModal" data-index="${list.indexOf(land)}">
                         Find some more info here
                     </button>
                 </div>
@@ -79,9 +83,9 @@ function setCountries(list) {
         button.addEventListener("click", (e) => {
             const landIndex = e.target.getAttribute('data-index');
             const land = list[landIndex];
-            const modal = document.getElementById('exampleModal');
+            const modal = document.getElementById('countryModal');
             const languages = Object.values(land.languages ?? {}).join(", ") || "No languages available";
-            const currencyArray = Object.values(land.currencies ?? {}).map(c => c.name).join(", ") || "No currencies available";
+            const currencyArray = Object.values(land.currencies ?? {}).map(c => `${c.name} (${c.symbol})`).join(", ") || "No currencies available";
 
             modal.querySelector('.modal-title').textContent = `Details of ${land.name.common}`;
             modal.querySelector('.modal-body').innerHTML = `

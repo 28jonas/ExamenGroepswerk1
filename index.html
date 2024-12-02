@@ -15,37 +15,29 @@
 <body>
 <div class="d-flex flex-column align-items-center ">
 	<h1>Landen van de wereld</h1>
-	<div><!--Dit zoekt momenteel op de continenten maar moet landen worden-->
+	<div><!--Dit zoekt de landen op-->
 		<input type="text" id="countrySearch" placeholder="Voer een land in:">
 		<button id="btn">Zoeken</button>
 	</div>
 	
 	<div> <!--Hiermoeten de continenten in opgezocht worden-->
 		<select id="continentSelector" class="form-select" aria-label="Default select example">
-			<option selected>Choose a continent</option>
-			<option value="1">Europe</option>
-			<option value="2">North America</option>
-			<option value="3">South America</option>
-			<option value="4">America</option>
-			<option value="5">Asia</option>
-			<option value="6">Africa</option>
-			<option value="7">Antartica</option>
 		</select>
 	</div>
 </div>
 
 <div class="container mt-5">
-	<div id="showimg" class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-3">
+	<div id="countryList" class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-3">
 	
 	</div>
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="countryModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+				<h1 class="modal-title fs-5" id="countryModalLabel">Modal title</h1>
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div id="modalinfo" class="modal-body">
