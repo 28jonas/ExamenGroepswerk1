@@ -1,11 +1,15 @@
 const continentSelector = document.getElementById("continentSelector")
 const countrySearch = document.getElementById("countrySearch")
+
 let countries = [];
 
 getData();
 
 
 countrySearch.addEventListener("input", () => {
+    // Verwijder alle niet-letters met een regex, maar sta ook diakritische tekens toe (zoals ë, ç, etc.)
+    this.value = this.value.replace(/[^a-zA-Z\u00C0-\u017F\s-]/g, ''); // Unicode range for accented characters
+
     const filteredCountries = applyFilters();
     setCountries(filteredCountries);
 });
