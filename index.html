@@ -85,7 +85,9 @@
 			const response = await axios.get('https://restcountries.com/v3.1/all');
 
 			const data = response.data
-			console.log(data);
+			if (!data) {
+				throw new Error('Geen data ontvangen');
+			}
 			countries = data
 					.sort((a, b) => a.name.common.localeCompare(b.name.common)) // alfabetisch ordenen
 					.map(country => ({
