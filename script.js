@@ -125,8 +125,11 @@ function setCountries(list) {
                 maxZoom: 19,
             }).addTo(map);
 
-            if (latlng[0] !== 0 && latlng[1] !== 0)
-                L.marker([latlng[0], latlng[1]]).addTo(map);
+            if (latlng[0] !== 0 && latlng[1] !== 0){
+                const marker = L.marker([latlng[0], latlng[1]]).addTo(map);
+                marker.bindPopup(`<b>Capital city of ${land.name.common}</b><br>${land.capital}`);
+            }
+
 
             mapEl.classList.add("visually-hidden")
 
