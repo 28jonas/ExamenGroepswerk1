@@ -16,7 +16,7 @@
 <div class="d-flex flex-column align-items-center ">
 	<h1>Landen van de wereld</h1>
 	<div><!--Dit zoekt momenteel op de continenten maar moet landen worden-->
-		<input type="text" id="continent" placeholder="Voer een continent in:">
+		<input type="text" id="continent" placeholder="Voer een land in:">
 		<button id="btn">Zoeken</button>
 	</div>
 	
@@ -57,6 +57,15 @@
 		</div>
 	</div>
 </div>
+
+<script>
+	const continentInput = document.getElementById('continent');
+	
+	continentInput.addEventListener('input', function () {
+		// Verwijder alle niet-letters met een regex
+		this.value = this.value.replace(/[^a-zA-Z\s-]/g, '');
+	});
+</script>
 
 
 </body>
