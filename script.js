@@ -39,6 +39,8 @@ function applyFilters(){
 
     // Filter countries by name (substring search in a.name.common)
     let filteredCountries = countries.filter(country => country.name.common.toLowerCase().includes(searchTerm));
+    // Sort so that countries where the searchTerm is found earlier appear first
+    filteredCountries.sort((a, b) => a.name.common.toLowerCase().indexOf(searchTerm) - b.name.common.toLowerCase().indexOf(searchTerm));
 
     // If the selected continent is empty, show all countries
     filteredCountries = continentSelector.value === ""
