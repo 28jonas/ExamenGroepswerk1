@@ -67,15 +67,19 @@ function setCountries(list) {
     list.forEach(land => {
         htmlContent += `
         <div class="col">
-            <div class="card h-100">
-                <img src="${land.flags.png}" class="card-img-top img-fluid" alt="${land.name.common}">
+            <div class="card h-100 m-1">
+                <div style="height: 300px" class="d-flex align-items-center border-bottom">
+                     <img src="${land.flags.png}" class="card-img-top img-fluid" alt="${land.name.common}">
+                </div>
                 <div class="card-body">
                     <h5 class="card-title">${land.name.common}</h5>
-                    <p class="card-text">Region: ${land.subregion ?? land.region}</p>
+                    <p class="card-text m-0">Region: ${land.subregion ?? land.region}</p>
                     <p class="card-text">Population: ${land.population}</p>
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#countryModal" data-index="${list.indexOf(land)}">
-                        Find some more info here
-                    </button>
+                    <div class="d-flex justify-content-center">
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#countryModal" data-index="${list.indexOf(land)}">
+                        Get more info
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>`;
