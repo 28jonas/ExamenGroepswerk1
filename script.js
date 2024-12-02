@@ -17,7 +17,12 @@ continentSelector.addEventListener("change", () => {
 async function getData(){
     try {
         const {data} = await axios.get('https://restcountries.com/v3.1/all');
-        countries = data.sort((a, b) => a.name.common.localeCompare(b.name.common)) // alfabetisch ordenen
+        countries = data
+            .sort((a, b) => a.name.common.localeCompare(b.name.common)) // alfabetisch ordenen
+            .map(country => ({
+                ...country,
+                population: country.population ? country.population.toLocaleString("nl-BE") : "N/A" // Format population
+            }));
         setCountries(countries)
         setContinents([...new Set(data.flatMap(country => country.continents))])
     } catch (error) {
@@ -53,7 +58,7 @@ function applyFilters(){
 function setCountries(list) {
     const countryListEl = document.getElementById('countryList');
     if (list.length === 0) {
-        countryListEl.innerHTML = "<p>No countries found. Try a different search.</p>";
+        countryListEl.innerHTML = '<div class="alert alert-info w-50 mx-auto text-center" role="alert">No countries found. Try a different search.</div>';
         return;
     }
     let htmlContent = "";
@@ -66,7 +71,7 @@ function setCountries(list) {
                 <img src="${land.flags.png}" class="card-img-top img-fluid" alt="${land.name.common}">
                 <div class="card-body">
                     <h5 class="card-title">${land.name.common}</h5>
-                    <p class="card-text">Region: ${land.subregion}</p>
+                    <p class="card-text">Region: ${land.subregion ?? land.region}</p>
                     <p class="card-text">Population: ${land.population}</p>
                     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#countryModal" data-index="${list.indexOf(land)}">
                         Find some more info here
@@ -91,16 +96,19 @@ function setCountries(list) {
 
             modal.querySelector('.modal-title').textContent = `Details of ${land.name.common}`;
             modal.querySelector('.modal-body').innerHTML = `
-            <p>Information about <strong>${land.name.common}</strong> will go here.</p>
-            <p>Capital: ${land.capital}</p>
-            <p>Languages: ${languages}</p>
-            <p>Currencies: ${currencyArray}</p>
-            <p>Population: ${land.population}</p>
-            <img src="${land.flags.png}" alt="Flag of ${land.name.common}">
-            <div id="map" style="width: 80%; height: 400px;"></div>
+            <div class="row">
+              <div class="col-8">
+                <p><strong>Capital: </strong>${land.capital}</p>
+                <p><strong>Languages: </strong>${languages}</p>
+                <p><strong>Currencies: </strong>${currencyArray}</p>
+                <p><strong>Population: </strong>${land.population}</p>
+              </div>
+              <div class="col-4">
+                <img class="img-fluid" src="${land.flags.png}" alt="Flag of ${land.name.common}">
+              </div>
             </div>
-            
-`;
+            <div id="map" style="width: 80%; height: 400px;" class="mx-auto rounded-2 mt-3 shadow-sm"></div>
+            `;
 
             const mapEl = modal.querySelector('.modal-body #map')
 
