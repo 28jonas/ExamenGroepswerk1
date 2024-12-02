@@ -63,38 +63,52 @@ function setCountries(list) {
     }
     let htmlContent = "";
 
-    axios.get(url)
-        .then(response =>{
-            const landen = response.data;
-            console.log(landen)
-            let outputHTML = ` `;
-            landen.forEach(land => {
-                const languages = land.languages ? Object.values(land.languages).join(", "): 'No languages available';
+    // Pre-build all HTML content in one loop
+    list.forEach(land => {
+        htmlContent += `
+        <div class="col">
+            <div class="card h-100">
+                <img src="${land.flags.png}" class="card-img-top img-fluid" alt="${land.name.common}">
+                <div class="card-body">
+                    <h5 class="card-title">${land.name.common}</h5>
+                    <p class="card-text">Region: ${land.subregion ?? land.region}</p>
+                    <p class="card-text">Population: ${land.population}</p>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#countryModal" data-index="${list.indexOf(land)}">
+                        Find some more info here
+                    </button>
+                </div>
+            </div>
+        </div>`;
+    });
 
-                const currencyArray = land.currencies ? Object.values(land.currencies).map(currency => currency.name).join(", ") : "No currencies available";
+    // Insert all the generated HTML at once
+    countryListEl.innerHTML = htmlContent;
 
-                console.log(currencyArray)
-                outputHTML +=	`
-							<div>
-								<div class="card h-100 m-1 ">
-								    <div style="height: 300px" class="d-flex align-items-center border-bottom">
-                                    <img src="${land.flags.png}" class="card-img-top img-fluid img-thumbnail my-auto" alt="${land.name.common}">
-                                    </div>
-                                    <div class="card-body">
-                                        <h5 class="card-title">${land.name.common}</h5>
-                                        <p class="card-text mb-0">Region: ${land.subregion}</p>
-                                        <p class="card-text">Population: ${land.population.toLocaleString('nl-NL')}</p>
-                                        <div class="d-flex justify-content-center">
-                                            <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"  data-country-name="${land.name.common}" data-country-capital="${land.capital}" data-country-languages="${languages}" data-country-currencie="${currencyArray}" data-country-population="${land.population}" data-country-flag="${land.flags.png}">More info over ${land.name.common} </a>
-                                        </div>
-                                        
-                                    </div>
-								</div>
-							</div>
-							
-							` /*+ ouputHTMlland*/
-                            /*toLocalString is voor het formatteren van de cijfers*/
+    // Add event listeners after inserting content
+    const buttons = countryListEl.querySelectorAll('button');
+    buttons.forEach(button => {
+        button.addEventListener("click", (e) => {
+            const landIndex = e.target.getAttribute('data-index');
+            const land = list[landIndex];
+            const modal = document.getElementById('countryModal');
+            const languages = Object.values(land.languages ?? {}).join(", ") || "No languages available";
+            const currencyArray = Object.values(land.currencies ?? {}).map(c => `${c.name} (${c.symbol})`).join(", ") || "No currencies available";
 
+            modal.querySelector('.modal-title').textContent = `Details of ${land.name.common}`;
+            modal.querySelector('.modal-body').innerHTML = `
+            <div class="row">
+              <div class="col-8">
+                <p><strong>Capital: </strong>${land.capital}</p>
+                <p><strong>Languages: </strong>${languages}</p>
+                <p><strong>Currencies: </strong>${currencyArray}</p>
+                <p><strong>Population: </strong>${land.population}</p>
+              </div>
+              <div class="col-4">
+                <img class="img-fluid" src="${land.flags.png}" alt="Flag of ${land.name.common}">
+              </div>
+            </div>
+            <div id="map" style="width: 80%; height: 400px;" class="mx-auto rounded-2 mt-3 shadow-sm"></div>
+            `;
 
             const mapEl = modal.querySelector('.modal-body #map')
 
