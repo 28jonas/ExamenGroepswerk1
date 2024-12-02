@@ -98,7 +98,7 @@ function setCountries(list) {
             modal.querySelector('.modal-body').innerHTML = `
             <div class="row">
               <div class="col-8">
-                <p><strong>Capital: </strong>${land.capital}</p>
+                <p><strong>Capital: </strong>${land.capital ?? "N/A"}</p>
                 <p><strong>Languages: </strong>${languages}</p>
                 <p><strong>Currencies: </strong>${currencyArray}</p>
                 <p><strong>Population: </strong>${land.population}</p>
@@ -116,24 +116,23 @@ function setCountries(list) {
             // Check if land.capitalInfo.latlng exists and has valid latitude and longitude
             const latlng = land.capitalInfo && Array.isArray(land.capitalInfo.latlng) && land.capitalInfo.latlng.length === 2
                 ? land.capitalInfo.latlng
-                : [0, 0];  // Fallback to [0, 0] if latlng is invalid
+                : false;  // Fallback to false if latlng is invalid
+
+
+            if (latlng === false)
+                return mapEl.classList.add("visually-hidden")
+            mapEl.classList.remove("visually-hidden")
 
             // Create the map with the corrected coordinates
             const map = L.map('map').setView([latlng[0], latlng[1]], 10);
 
-            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 19,
-            }).addTo(map);
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 19,}).addTo(map);
 
-            if (latlng[0] !== 0 && latlng[1] !== 0){
-                const marker = L.marker([latlng[0], latlng[1]]).addTo(map);
-                marker.bindPopup(`<b>Capital city of ${land.name.common}</b><br>${land.capital}`);
-            }
+            const marker = L.marker([latlng[0], latlng[1]]).addTo(map);
+            marker.bindPopup(`<b>Capital city of ${land.name.common}</b><br>${land.capital}`);
 
-            mapEl.classList.add("visually-hidden")
 
             setTimeout(function() {
-                mapEl.classList.remove("visually-hidden")
                 map.invalidateSize();
             }, 250);
         });
