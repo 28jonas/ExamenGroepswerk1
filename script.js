@@ -2,7 +2,7 @@ const continentSelector = document.getElementById("continentSelector")
 const countrySearch = document.getElementById("countrySearch")
 let countries = [];
 
-getData();
+
 
 
 countrySearch.addEventListener("input", () => {
@@ -14,9 +14,10 @@ continentSelector.addEventListener("change", () => {
     setCountries(filteredCountries);
 });
 
-async function getData(){
+async  function getData(){
     try {
-        const {data} = await axios.get('https://restcountries.com/v3.1/all');
+        const response = await axios.get('https://restcountries.com/v3.1/all');
+        const data = response.data
         countries = data
             .sort((a, b) => a.name.common.localeCompare(b.name.common)) // alfabetisch ordenen
             .map(country => ({
@@ -137,3 +138,4 @@ function setCountries(list) {
         });
     });
 }
+getData();
