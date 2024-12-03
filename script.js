@@ -19,22 +19,53 @@ continentSelector.addEventListener("change", () => {
     setCountries(filteredCountries);
 });
 
-async function getData(){
+
+async function getData() {
     try {
-        const {data} = await axios.get('https://restcountries.com/v3.1/all');
+        const { data } = await axios.get('https://restcountries.com/v3.1/all');
+
         countries = data
-            .sort((a, b) => a.name.common.localeCompare(b.name.common)) // alfabetisch ordenen
-            .map(country => ({
-                ...country,
-                population: country.population ? country.population.toLocaleString("nl-BE") : "N/A" // Format population
-            }));
-        setCountries(countries)
-        setContinents([...new Set(data.flatMap(country => country.continents))])
+            .sort((a,b) => a.name.common.localeCompare(b.name.common))   // sort countries alphabetically
+            .map(transformCountryData);
+
+        setCountries(countries);
+        setContinents([...new Set(data.flatMap(country => country.continents))]);
     } catch (error) {
         console.error('Error fetching countries:', error);
-        countryListEl.innerHTML = '<div class="alert alert-danger w-50 mx-auto text-center" role="alert">Error loading data. Try refreshing page.</div>';
+        countryListEl.innerHTML = `
+            <div class="alert alert-danger w-50 mx-auto text-center" role="alert">
+                Error loading data. Try refreshing the page.
+            </div>`;
     }
 }
+
+// Helper function to transform country data
+function transformCountryData(country) {
+    const allNames = collectCountryNames(country);
+    const formattedPopulation = country.population ? country.population.toLocaleString('nl-BE') : 'N/A';
+
+    return {
+        ...country,
+        population: formattedPopulation,
+        allNames: new Set(allNames),
+    };
+}
+
+// Collect all names and translations of a country
+function collectCountryNames(country) {
+    const nativeNames = country.name.nativeName
+        ? Object.values(country.name.nativeName).flatMap(({ official, common }) => [official, common])
+        : [];
+    const translations = Object.values(country.translations).flatMap(({ official, common }) => [official, common]);
+
+    return [
+        country.name.common,
+        country.name.official,
+        ...nativeNames,
+        ...translations,
+    ];
+}
+
 
 
 function setContinents(continents){
@@ -48,10 +79,18 @@ function applyFilters(){
 
     const searchTerm = countrySearch.value.trim().toLowerCase();
 
-    // Filter countries by name (substring search in a.name.common)
-    let filteredCountries = countries.filter(country => country.name.common.toLowerCase().includes(searchTerm));
+    let filteredCountries = countries.filter(country => {
+        // Check if searchTerm is a value in country.allNames
+        return [...country.allNames].some(name => name.toLowerCase().includes(searchTerm));
+    });
+
     // Sort so that countries where the searchTerm is found earlier appear first
-    filteredCountries.sort((a, b) => a.name.common.toLowerCase().indexOf(searchTerm) - b.name.common.toLowerCase().indexOf(searchTerm));
+    filteredCountries.sort((a, b) => {
+        const indexA = Math.min(...[...a.allNames].map(name => name.toLowerCase().indexOf(searchTerm)).filter(idx => idx !== -1));
+        const indexB = Math.min(...[...b.allNames].map(name => name.toLowerCase().indexOf(searchTerm)).filter(idx => idx !== -1));
+        return indexA - indexB;
+    });
+
 
     // If the selected continent is empty, show all countries
     filteredCountries = continentSelector.value === ""
@@ -116,7 +155,12 @@ function setCountries(list) {
                 <img class="img-fluid" src="${land.flags.png}" alt="Flag of ${land.name.common}">
               </div>
             </div>
-            <div id="map" style="width: 80%; height: 400px;" class="mx-auto rounded-2 mt-3 shadow-sm"></div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="d-none" id="modalLocation"><p><strong>Location: </strong>Location data not available.</p></div>
+                    <div id="map" style="width: 90%; height: 400px;" class="mx-auto rounded-2 mt-3 shadow-sm"></div>
+                </div>
+            </div>
             `;
 
             const mapEl = modal.querySelector('.modal-body #map')
@@ -128,8 +172,12 @@ function setCountries(list) {
                 : false;  // Fallback to false if latlng is invalid
 
 
-            if (latlng === false)
-                return mapEl.classList.add("visually-hidden")
+            if (latlng === false){
+                mapEl.classList.add("visually-hidden")
+                document.getElementById("modalLocation").classList.remove("d-none")
+                return;
+            }
+
             mapEl.classList.remove("visually-hidden")
 
             // Create the map with the corrected coordinates
