@@ -69,7 +69,7 @@ function setCountries(list) {
         <div class="col">
             <div class="card h-100 m-1">
                 <div style="height: 300px" class="d-flex align-items-center border-bottom">
-                     <img src="${land.flags.png}" class="card-img-top img-fluid" alt="${land.name.common}">
+                     <img src="${land.flags.png}" class="card-img-top img-fluid border" alt="${land.name.common}">
                 </div>
                 <div class="card-body">
                     <h5 class="card-title">${land.name.common}</h5>
