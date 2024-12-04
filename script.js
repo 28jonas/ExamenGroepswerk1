@@ -77,25 +77,35 @@ function setContinents(continents){
 
 function applyFilters(){
 
+    // If the selected continent is empty, show all countries
+    let filteredCountries = continentSelector.value === ""
+        ? countries // No filter, show all countries
+        : countries.filter(country => country.continents.includes(continentSelector.value)); // Filter by selected continent
+
+
     const searchTerm = countrySearch.value.trim().toLowerCase();
 
-    let filteredCountries = countries.filter(country => {
-        // Check if searchTerm is a value in country.allNames
-        return [...country.allNames].some(name => name.toLowerCase().includes(searchTerm));
+    // Split into two groups: one where searchTerm is in name.common, and one where it's not
+    const matchesCommon = [];
+    const matchesOther = [];
+
+    filteredCountries.forEach(country => {
+        country.name.common.toLowerCase().includes(searchTerm) ? matchesCommon.push(country) : matchesOther.push(country);
     });
 
-    // Sort so that countries where the searchTerm is found earlier appear first
-    filteredCountries.sort((a, b) => {
-        const indexA = Math.min(...[...a.allNames].map(name => name.toLowerCase().indexOf(searchTerm)).filter(idx => idx !== -1));
-        const indexB = Math.min(...[...b.allNames].map(name => name.toLowerCase().indexOf(searchTerm)).filter(idx => idx !== -1));
-        return indexA - indexB;
-    });
+    // Helper to get the first index of the searchTerm in the country's names
+    const getFirstIndex = (country) => {
+        return Math.min(
+            ...[...country.allNames].map(name => name.toLowerCase().indexOf(searchTerm)).filter(idx => idx !== -1)
+        );
+    };
 
+    // Sort both groups by the position of the searchTerm
+    matchesCommon.sort((a, b) => getFirstIndex(a) - getFirstIndex(b));
+    matchesOther.sort((a, b) => getFirstIndex(a) - getFirstIndex(b));
 
-    // If the selected continent is empty, show all countries
-    filteredCountries = continentSelector.value === ""
-        ? filteredCountries // No filter, show all countries
-        : filteredCountries.filter(country => country.continents.includes(continentSelector.value)); // Filter by selected continent
+    // Combine the groups with matchesCommon first
+    filteredCountries = [...matchesCommon, ...matchesOther];
 
     return filteredCountries;
 }
@@ -109,14 +119,22 @@ function setCountries(list) {
 
     // Pre-build all HTML content in one loop
     list.forEach(land => {
+        let matchedName = ""; // Initialize with an empty string
+
+        // Check if a search term exists and land.allNames contains a match
+        const searchTerm = countrySearch.value.trim().toLowerCase();
+        if (searchTerm !== "" && !land.name.common.toLowerCase().includes(searchTerm))
+            matchedName = [...land.allNames].find(name => name.toLowerCase().includes(searchTerm)) || "";
+
         htmlContent += `
         <div class="col">
             <div class="card h-100 m-1">
-                <div style="height: 300px" class="d-flex align-items-center border-bottom">
-                     <img src="${land.flags.png}" class="card-img-top img-fluid border" alt="${land.name.common}">
+                <div style="height: 300px;" class="d-flex align-items-center border-bottom">
+                     <img src="${land.flags.png}" class="card-img-top img-fluid border" alt="Flag of ${land.name.common}">
                 </div>
                 <div class="card-body">
                     <h5 class="card-title">${land.name.common}</h5>
+                    <h6 class="card-title">${matchedName}</h6>
                     <p class="card-text m-0">Region: ${land.subregion ?? land.region}</p>
                     <p class="card-text">Population: ${land.population}</p>
                     <div class="d-flex justify-content-center">
