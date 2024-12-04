@@ -75,43 +75,39 @@ function setContinents(continents){
     })
 }
 
-function applyFilters(){
-
-    // If the selected continent is empty, show all countries
-    let filteredCountries = continentSelector.value === ""
-        ? countries // No filter, show all countries
-        : countries.filter(country => country.continents.includes(continentSelector.value)); // Filter by selected continent
-
-
+function applyFilters() {
     const searchTerm = countrySearch.value.trim().toLowerCase();
+    const continentValue = continentSelector.value;
 
-    // Split into two groups: one where searchTerm is in name.common, and one where it's not
-    const matchesCommon = [];
-    const matchesOther = [];
+    // Filter countries by continent and search term
+    let filteredCountries = countries.filter(country => {
+        const isInContinent = continentValue === "" || country.continents.includes(continentValue);
+        const isInCommonName = country.name.common.toLowerCase().includes(searchTerm);
+        const isInAllNames = [...country.allNames].some(name => name.toLowerCase().includes(searchTerm));
 
-    filteredCountries.forEach(country => {
-        if (country.name.common.toLowerCase().includes(searchTerm))   // Check if the common name includes the search term
-            matchesCommon.push(country);
-        else if ([...country.allNames].some(name => name.toLowerCase().includes(searchTerm)))    // Check if any name in allNames Set includes the search term
-            matchesOther.push(country);
+        return isInContinent && (isInCommonName || isInAllNames);
     });
 
-    // Helper to get the first index of the searchTerm in the country's names
-    const getFirstIndexName = (country) => {
-        return country.name.common.toLowerCase().indexOf(searchTerm);
-    };
-    const getFirstIndexAllNames = (country) => {
-        return Math.min(
-            ...[...country.allNames].map(name => name.toLowerCase().indexOf(searchTerm)).filter(idx => idx !== -1)
-        );
-    };
+    // Sort the filtered countries: prioritize matches in the common name
+    filteredCountries.sort((a, b) => {
+        const indexA = a.name.common.toLowerCase().indexOf(searchTerm);
+        const indexB = b.name.common.toLowerCase().indexOf(searchTerm);
 
-    // Sort both groups by the position of the searchTerm
-    matchesCommon.sort((a, b) => getFirstIndexName(a) - getFirstIndexName(b));
-    matchesOther.sort((a, b) => getFirstIndexAllNames(a) - getFirstIndexAllNames(b));
+        // If both names contain the search term, compare their positions
+        if (indexA !== -1 && indexB !== -1) {
+            return indexA - indexB;
+        }
 
-    // Combine the groups with matchesCommon first
-    filteredCountries = [...matchesCommon, ...matchesOther];
+        // If only one contains the search term, prioritize that one
+        if (indexA !== -1) return -1;
+        if (indexB !== -1) return 1;
+
+        // If neither contains the search term, use 'allNames' fallback
+        const indexAAllNames = Math.min(...[...a.allNames].map(name => name.toLowerCase().indexOf(searchTerm)).filter(idx => idx !== -1));
+        const indexBAllNames = Math.min(...[...b.allNames].map(name => name.toLowerCase().indexOf(searchTerm)).filter(idx => idx !== -1));
+
+        return indexAAllNames - indexBAllNames;
+    });
 
     return filteredCountries;
 }
