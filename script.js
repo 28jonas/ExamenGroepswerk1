@@ -68,16 +68,17 @@ function setCountries(list) {
         htmlContent += `
         <div class="col">
             <div class="card h-100 m-1">
-                <div style="height: 300px" class="d-flex align-items-center border-bottom">
-                     <img src="${land.flags.png}" class="card-img-top img-fluid border" alt="${land.name.common}">
+                <div class="d-flex align-items-center border-bottom">
+                    <img src="${land.flags.png}" class="card-img-top img-fluid border" alt="Flag of ${land.name.common}">
                 </div>
-                <div class="card-body">
-                    <h5 class="card-title">${land.name.common}</h5>
-                    <p class="card-text m-0">Region: ${land.subregion ?? land.region}</p>
-                    <p class="card-text">Population: ${land.population}</p>
-                    <div class="d-flex justify-content-center">
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#countryModal" data-index="${list.indexOf(land)}">
-                        Get more info
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex flex-column mt-auto">
+                        <h5 class="card-title">${land.name.common}</h5>
+                        <h6 class="card-title">${matchedName}</h6>
+                        <p class="card-text m-0">Region: ${land.subregion ?? land.region}</p>
+                        <p class="card-text">Population: ${land.population}</p>
+                        <button class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#countryModal" data-index="${list.indexOf(land)}">
+                            Get more info
                         </button>
                     </div>
                 </div>
