@@ -92,20 +92,23 @@ function applyFilters(){
     filteredCountries.forEach(country => {
         if (country.name.common.toLowerCase().includes(searchTerm))   // Check if the common name includes the search term
             matchesCommon.push(country);
-        else if ([...country.allNames].some(name => name.toLowerCase().includes(searchTerm)))    // Check if any name in allNames array includes the search term
+        else if ([...country.allNames].some(name => name.toLowerCase().includes(searchTerm)))    // Check if any name in allNames Set includes the search term
             matchesOther.push(country);
     });
 
     // Helper to get the first index of the searchTerm in the country's names
-    const getFirstIndex = (country) => {
+    const getFirstIndexName = (country) => {
+        return country.name.common.toLowerCase().indexOf(searchTerm);
+    };
+    const getFirstIndexAllNames = (country) => {
         return Math.min(
             ...[...country.allNames].map(name => name.toLowerCase().indexOf(searchTerm)).filter(idx => idx !== -1)
         );
     };
 
     // Sort both groups by the position of the searchTerm
-    matchesCommon.sort((a, b) => getFirstIndex(a) - getFirstIndex(b));
-    matchesOther.sort((a, b) => getFirstIndex(a) - getFirstIndex(b));
+    matchesCommon.sort((a, b) => getFirstIndexName(a) - getFirstIndexName(b));
+    matchesOther.sort((a, b) => getFirstIndexAllNames(a) - getFirstIndexAllNames(b));
 
     // Combine the groups with matchesCommon first
     filteredCountries = [...matchesCommon, ...matchesOther];
