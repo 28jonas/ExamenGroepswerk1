@@ -90,7 +90,10 @@ function applyFilters(){
     const matchesOther = [];
 
     filteredCountries.forEach(country => {
-        country.name.common.toLowerCase().includes(searchTerm) ? matchesCommon.push(country) : matchesOther.push(country);
+        if (country.name.common.toLowerCase().includes(searchTerm))   // Check if the common name includes the search term
+            matchesCommon.push(country);
+        else if ([...country.allNames].some(name => name.toLowerCase().includes(searchTerm)))    // Check if any name in allNames array includes the search term
+            matchesOther.push(country);
     });
 
     // Helper to get the first index of the searchTerm in the country's names
