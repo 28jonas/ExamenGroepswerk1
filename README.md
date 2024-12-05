@@ -19,7 +19,7 @@ Dit project toont landeninformatie door gebruik te maken van de **REST Countries
 ## Hoe te gebruiken
 1. Clone deze repository:
    ```bash
-   git clone https://github.com/<gebruikersnaam>/landen-van-de-wereld.git
+   git clone https://github.com/28jonas/landen-van-de-wereld.git
    ```
 2. Open het project in een browser via `index.html`.
 3. Zoek een land of filter op continent en bekijk de details.
